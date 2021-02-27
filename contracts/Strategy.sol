@@ -17,7 +17,7 @@ import {
 
 interface ICurveFi {
     function get_virtual_price() external view returns (uint256);
-    function balances(int128) external view returns (uint256);
+    function balances(uint256) external view returns (uint256);
     function add_liquidity(
         uint256[2] calldata amounts,
         uint256 min_mint_amount
@@ -30,7 +30,7 @@ interface ICurveFi {
 }
 
 interface Iyv2 is IERC20 {
-    function PricePerShare() external view returns (uint256);
+    function pricePerShare() external view returns (uint256);
     function deposit(uint256) external returns (uint256);
     function withdraw(uint256) external returns (uint256);
 }
@@ -82,7 +82,7 @@ contract Strategy is BaseStrategy {
     }
 
     function name() external view override returns (string memory) {
-        return "StrategysteCurveWETHSingleSide";
+        return "StrategysteCurveWETHSingleSided";
     }
 
     function balanceOfWant() public view returns (uint) {
@@ -102,7 +102,7 @@ contract Strategy is BaseStrategy {
     }
 
     function balanceOfyvsteCRVinsteCRV() public view returns (uint) {
-        return balanceOfyvsteCRV().mul(yvsteCRV.PricePerShare()).div(1e18);
+        return balanceOfyvsteCRV().mul(yvsteCRV.pricePerShare()).div(1e18);
     }
 
     function balanceOfyvsteCRVinWant() public view returns (uint) {
@@ -185,7 +185,7 @@ contract Strategy is BaseStrategy {
 
     function _withdrawSome(uint _amount) internal returns (uint) {
         uint _amnt = _amount.mul(1e18).div(pool.get_virtual_price());
-        uint _amt = _amnt.mul(1e18).div(yvsteCRV.PricePerShare());
+        uint _amt = _amnt.mul(1e18).div(yvsteCRV.pricePerShare());
         uint _bal = yvsteCRV.balanceOf(address(this));
         if (_amt > _bal) _amt = _bal;
         uint _before = steCRV.balanceOf(address(this));
@@ -249,7 +249,7 @@ contract Strategy is BaseStrategy {
     }
 
     function drip() internal {
-        uint _p = yvsteCRV.PricePerShare();
+        uint _p = yvsteCRV.pricePerShare();
         _p = _p.mul(pool.get_virtual_price()).div(1e18);
         if (_p >= p) {
             tip = tip.add((_p.sub(p)).mul(balanceOfyvsteCRV()).div(1e18));
