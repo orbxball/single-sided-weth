@@ -122,23 +122,40 @@ contract Strategy is BaseStrategy {
             uint256 _debtPayment
         )
     {
-        if (_debtOutstanding > 0) {
-            (_debtPayment, _loss) = liquidatePosition(_debtOutstanding);
+        rebalance();
+        // net gain net loss
+        if (tip > rip) {
+            tip = tip.sub(rip);
+            rip = 0;
+        }
+        else {
+            rip = rip.sub(tip);
+            tip = 0;
         }
 
-        drip();
-        if (tip > 0) {
-            if (tank >= tip) {
+        uint _free = tip + _debtOutstanding;
+        if (_free > 0) {
+            if (tank >= _free) {
                 _profit = tip;
-                tank = tank.sub(tip);
+                _debtPayment = _debtOutstanding;
+                tank = tank.sub(_free);
             }
             else {
-                _profit = _withdrawSome(tip.sub(tank));
-                _profit = _profit.add(tank);
+                uint _withdrawn = _withdrawSome(_free.sub(tank));
+                _withdrawn = _withdrawn.add(tank);
                 tank = 0;
+                if (_withdrawn >= tip) {
+                    _profit = tip;
+                    _debtPayment = _withdrawn.sub(tip);
+                }
+                else {
+                    _profit = _withdrawn;
+                    _debtPayment = 0;
+                }
             }
             tip = 0;
         }
+
         if (rip > 0) {
             _loss = _loss.add(rip);
             rip = 0;
