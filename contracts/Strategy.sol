@@ -62,7 +62,10 @@ contract Strategy is BaseStrategy {
     uint public checkpoint;
 
     constructor(address _vault) public BaseStrategy(_vault) {
-        maxReportDelay = 2 days;
+        minReportDelay = 1 days;
+        maxReportDelay = 3 days;
+        profitFactor = 1000;
+        debtThreshold = 1e20;
 
         want.approve(address(pool), uint(-1));
         steCRV.approve(address(pool), uint(-1));
