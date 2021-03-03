@@ -54,16 +54,16 @@ contract Strategy is BaseStrategy {
     uint public threshold = 6000;
     uint public slip = 50;
     uint public maxAmount = 1e20;
+    uint public interval = 6 hours;
     uint public tank;
     uint public p;
     uint public tip;
     uint public rip;
+    uint public checkpoint;
 
     constructor(address _vault) public BaseStrategy(_vault) {
-        // You can set these parameters on deployment to whatever you want
-        maxReportDelay = 31500; // 6300 * 5
-        // profitFactor = 100;
-        // debtThreshold = 0;
+        maxReportDelay = 2 days;
+
         want.approve(address(pool), uint(-1));
         steCRV.approve(address(pool), uint(-1));
         steCRV.approve(address(yvsteCRV), uint(-1));
@@ -79,6 +79,10 @@ contract Strategy is BaseStrategy {
 
     function setMaxAmount(uint _maxAmount) external onlyAuthorized {
         maxAmount = _maxAmount;
+    }
+
+    function setInterval(uint _interval) external onlyAuthorized {
+        interval = _interval;
     }
 
     function name() external view override returns (string memory) {
@@ -174,6 +178,7 @@ contract Strategy is BaseStrategy {
         uint _amnt = steCRV.balanceOf(address(this));
         if (_amnt > 0) {
             yvsteCRV.deposit(_amnt);
+            checkpoint = block.timestamp;
         }
     }
 
@@ -221,7 +226,11 @@ contract Strategy is BaseStrategy {
         weth.deposit{value: _bal}();
     }
 
-    // NOTE: Can override `tendTrigger` and `harvestTrigger` if necessary
+    function tendTrigger(uint256 callCost) public override view returns (bool) {
+        uint _want = (want.balanceOf(address(this))).sub(tank);
+        (uint256 _t, uint256 _c) = tick();
+        return (_c > _t) || (checkpoint.add(interval) < block.timestamp) || (_want > 0);
+    }
 
     function prepareMigration(address _newStrategy) internal override {
         yvsteCRV.transfer(_newStrategy, yvsteCRV.balanceOf(address(this)));
