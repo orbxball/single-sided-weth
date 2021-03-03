@@ -168,6 +168,7 @@ contract Strategy is BaseStrategy {
             if (_want > maxAmount) _want = maxAmount;
             uint v = _want.mul(1e18).div(pool.get_virtual_price());
             weth.withdraw(_want);
+            _want = address(this).balance;
             pool.add_liquidity{value: _want}([_want, 0], v.mul(DENOMINATOR.sub(slip)).div(DENOMINATOR));
         }
         uint _amnt = steCRV.balanceOf(address(this));
