@@ -232,7 +232,7 @@ contract Strategy is BaseStrategy {
     function tendTrigger(uint256 callCost) public override view returns (bool) {
         uint _want = (want.balanceOf(address(this))).sub(tank);
         (uint256 _t, uint256 _c) = tick();
-        return (_c > _t) || (checkpoint.add(interval) < block.timestamp) || (_want > 0);
+        return (_c > _t) || (checkpoint.add(interval) < block.timestamp && _want > 0);
     }
 
     function prepareMigration(address _newStrategy) internal override {
