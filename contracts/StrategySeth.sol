@@ -53,7 +53,7 @@ contract Strategy is BaseStrategy {
     uint constant public DENOMINATOR = 10000;
     uint public threshold = 6000;
     uint public slip = 50;
-    uint public maxAmount = 1e20;
+    uint public maxAmount = 5e20;
     uint public interval = 6 hours;
     uint public tank;
     uint public p;
@@ -118,6 +118,10 @@ contract Strategy is BaseStrategy {
 
     function estimatedTotalAssets() public view override returns (uint256) {
         return balanceOfWant().add(balanceOfyveCRVinWant());
+    }
+
+    function delegatedAssets() external view override returns (uint256) {
+        return balanceOfyveCRVinWant();
     }
 
     function prepareReturn(uint256 _debtOutstanding)
@@ -186,6 +190,7 @@ contract Strategy is BaseStrategy {
     }
 
     function adjustPosition(uint256 _debtOutstanding) internal override {
+        if (emergencyExit) return;
         rebalance();
         deposit();
     }
