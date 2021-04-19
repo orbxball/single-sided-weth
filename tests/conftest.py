@@ -1,67 +1,61 @@
 import pytest
-from brownie import config
-from brownie import Contract
+from brownie import config, Wei, Contract
 
 
 @pytest.fixture
 def gov(accounts):
-    yield accounts[0]
-    # yield accounts.at('0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52', force=True)
+    # ychad.eth
+    yield accounts.at('0xFEB4acf3df3cDEA7399794D0869ef76A6EfAff52', force=True)
 
 
 @pytest.fixture
-def rewards(accounts):
-    yield accounts[1]
+def rewards(gov):
+    yield gov  # TODO: Add rewards contract
 
 
 @pytest.fixture
 def guardian(accounts):
-    yield accounts[2]
+    # dev.ychad.eth
+    yield accounts.at('0x846e211e8ba920B353FB717631C015cf04061Cc9', force=True)
 
 
 @pytest.fixture
 def management(accounts):
-    yield accounts[3]
+    # dev.ychad.eth
+    yield accounts.at('0x846e211e8ba920B353FB717631C015cf04061Cc9', force=True)
 
 
 @pytest.fixture
 def strategist(accounts):
-    yield accounts[4]
-    # yield accounts.at('0x710295b5f326c2e47E6dD2E7F6b5b0F7c5AC2F24', force=True)
+    # You! Our new Strategist!
+    yield accounts[3]
 
 
 @pytest.fixture
 def keeper(accounts):
-    yield accounts[5]
+    # This is our trusty bot!
+    yield accounts[4]
 
 
 @pytest.fixture
 def token():
-    token_address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"  # this should be the address of the ERC-20 used by the strategy/vault (DAI)
-    yield Contract(token_address)
-
-
-@pytest.fixture
-def amount(accounts, token):
-    amount = 100 * 10 ** token.decimals()
-    # In order to get some funds for the token you are about to use,
-    # it impersonate an exchange address to use it's funds.
-    reserve = accounts.at("0x71116d00e6a929f7828455D1a05de3aC45DC0193", force=True)
-    token.transfer(accounts[0], amount, {"from": reserve})
-    yield amount
-
-
-@pytest.fixture
-def weth():
     token_address = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"
     yield Contract(token_address)
 
 
 @pytest.fixture
-def weth_amout(gov, weth):
-    weth_amout = 10 ** weth.decimals()
-    gov.transfer(weth, weth_amout)
-    yield weth_amout
+def amount(accounts, token, whale):
+    amount = 100 * 10 ** token.decimals()
+    # In order to get some funds for the token you are about to use,
+    # it impersonate an exchange address to use it's funds.
+    reserve = whale
+    token.transfer(accounts[0], amount, {"from": reserve})
+    yield amount
+
+
+@pytest.fixture
+def weth(interface):
+    yield interface.ERC20('0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2')
 
 
 @pytest.fixture
@@ -75,8 +69,32 @@ def vault(pm, gov, rewards, guardian, management, token):
 
 
 @pytest.fixture
-def strategy(strategist, keeper, vault, Strategy, gov):
+def strategy(accounts, strategist, keeper, vault, Strategy, gov):
     strategy = strategist.deploy(Strategy, vault)
     strategy.setKeeper(keeper)
     vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})
+
     yield strategy
+
+
+@pytest.fixture
+def whale(accounts):
+    # binance7 wallet
+    # acc = accounts.at('0xBE0eB53F46cd790Cd13851d5EFf43D12404d33E8', force=True)
+
+    # binance8 wallet
+    #acc = accounts.at('0xf977814e90da44bfa03b6295a0616a897441acec', force=True)
+
+    # dydx
+    acc = accounts.at('0x1E0447b19BB6EcFdAe1e4AE1694b0C3659614e4e', force=True)
+    yield acc
+
+
+@pytest.fixture
+def seth_vault():
+    yield Contract('0x986b4AFF588a109c09B50A03f42E4110E29D353F')
+
+
+@pytest.fixture
+def steth_vault():
+    yield Contract('0xdCD90C7f6324cfa40d7169ef80b12031770B4325')
