@@ -61,7 +61,7 @@ def weth(interface):
 @pytest.fixture
 def vault(pm, gov, rewards, guardian, management, token):
     Vault = pm(config["dependencies"][0]).Vault
-    vault = guardian.deploy(Vault)
+    vault = Vault.deploy({"from": gov})
     vault.initialize(token, gov, rewards, "", "", guardian)
     vault.setDepositLimit(2 ** 256 - 1, {"from": gov})
     vault.setManagement(management, {"from": gov})
