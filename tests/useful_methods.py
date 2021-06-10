@@ -6,6 +6,7 @@ def state_of_strategy(strategy, currency, vault):
     state = vault.strategies(strategy).dict()
     print(f"\n--- state of {strategy.name()} ---")
     print("Want:", currency.balanceOf(strategy) / scale)
+    print("Tank:", strategy.tank() / scale)
     print("Total assets estimate:", strategy.estimatedTotalAssets() / scale)
     print(f"Total Strategy Debt: {state['totalDebt'] / scale}")
     print(f"Strategy Debt Ratio: {state['debtRatio']}")
@@ -22,6 +23,8 @@ def state_of_vault(vault, currency):
     print(f"Total Assets: {vault.totalAssets() / scale}")
     print(f"Loose balance in vault: {currency.balanceOf(vault) / scale}")
     print(f"Total Debt: {vault.totalDebt() / scale}")
+    print(f"Price per share: {vault.pricePerShare() / scale}")
+    print(f"Vault share totalSupply: {vault.totalSupply() / scale}")
 
 
 def harvest_live_vault(vault):
