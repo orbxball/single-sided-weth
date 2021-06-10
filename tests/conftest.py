@@ -49,7 +49,6 @@ def amount(accounts, token, whale):
     # In order to get some funds for the token you are about to use,
     # it impersonate an exchange address to use it's funds.
     reserve = whale
-    token.transfer(accounts[0], amount, {"from": reserve})
     yield amount
 
 
@@ -70,7 +69,7 @@ def vault(pm, gov, rewards, guardian, management, token):
 
 @pytest.fixture
 def strategy(accounts, strategist, keeper, vault, Strategy, gov):
-    strategy = strategist.deploy(Strategy, vault)
+    strategy = Strategy.deploy(vault, {"from": strategist})
     strategy.setKeeper(keeper)
     vault.addStrategy(strategy, 10_000, 0, 2 ** 256 - 1, 1_000, {"from": gov})
 
