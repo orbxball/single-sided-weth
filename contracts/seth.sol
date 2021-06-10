@@ -175,7 +175,7 @@ contract Strategy is BaseStrategy {
     }
 
     function deposit() internal {
-        uint _want = want.balanceOf(address(this));
+        uint _want = balanceOfWant();
         if (_want > 0) {
             if (_want > maxAmount) _want = maxAmount;
             uint v = _want.mul(1e18).div(pool.get_virtual_price());
@@ -204,7 +204,7 @@ contract Strategy is BaseStrategy {
         returns (uint256 _liquidatedAmount, uint256 _loss)
     {
         rebalance();
-        uint _balance = want.balanceOf(address(this));
+        uint _balance = balanceOfWant();
         if (_balance < _amountNeeded) {
             _liquidatedAmount = _withdrawSome(_amountNeeded.sub(_balance));
             _liquidatedAmount = _liquidatedAmount.add(_balance);
@@ -239,7 +239,7 @@ contract Strategy is BaseStrategy {
     }
 
     function tendTrigger(uint256 callCost) public override view returns (bool) {
-        uint _want = want.balanceOf(address(this));
+        uint _want = balanceOfWant();
         (uint256 _t, uint256 _c) = tick();
         return (_c > _t) || (checkpoint.add(interval) < block.timestamp && _want > 0);
     }
@@ -309,7 +309,7 @@ contract Strategy is BaseStrategy {
         (uint _t, uint _c) = tick();
         if (_c > _t) {
             _withdrawSome(_c.sub(_t));
-            tank = want.balanceOf(address(this));
+            tank = balanceOfWant();
         }
     }
 
