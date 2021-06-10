@@ -144,6 +144,7 @@ contract Strategy is BaseStrategy {
             tip = 0;
         }
 
+        tank = balanceOfWant();
         uint _free = tip + _debtOutstanding;
         if (_free > 0) {
             if (tank >= _free) {
@@ -174,13 +175,15 @@ contract Strategy is BaseStrategy {
     }
 
     function deposit() internal {
-        uint _want = (want.balanceOf(address(this))).sub(tank);
+        uint _want = want.balanceOf(address(this));
         if (_want > 0) {
             if (_want > maxAmount) _want = maxAmount;
             uint v = _want.mul(1e18).div(pool.get_virtual_price());
             weth.withdraw(_want);
             _want = address(this).balance;
             pool.add_liquidity{value: _want}([_want, 0], v.mul(DENOMINATOR.sub(slip)).div(DENOMINATOR));
+            if (_want < tank) tank = tank.sub(_want);
+            else tank = 0;
         }
         uint _amnt = eCRV.balanceOf(address(this));
         if (_amnt > 0) {
@@ -236,7 +239,7 @@ contract Strategy is BaseStrategy {
     }
 
     function tendTrigger(uint256 callCost) public override view returns (bool) {
-        uint _want = (want.balanceOf(address(this))).sub(tank);
+        uint _want = want.balanceOf(address(this));
         (uint256 _t, uint256 _c) = tick();
         return (_c > _t) || (checkpoint.add(interval) < block.timestamp && _want > 0);
     }
