@@ -45,7 +45,7 @@ def token():
 
 @pytest.fixture
 def amount(accounts, token, whale):
-    amount = 100 * 10 ** token.decimals()
+    amount = 1000 * 10 ** token.decimals()
     # In order to get some funds for the token you are about to use,
     # it impersonate an exchange address to use it's funds.
     reserve = whale
