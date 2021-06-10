@@ -206,6 +206,7 @@ contract Strategy is BaseStrategy {
             _liquidatedAmount = _withdrawSome(_amountNeeded.sub(_balance));
             _liquidatedAmount = _liquidatedAmount.add(_balance);
             if (_liquidatedAmount > _amountNeeded) _liquidatedAmount = _amountNeeded;
+            else _loss = _amountNeeded.sub(_liquidatedAmount);
             tank = 0;
         }
         else {
