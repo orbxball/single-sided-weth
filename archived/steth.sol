@@ -121,7 +121,11 @@ contract Strategy is BaseStrategy {
     }
 
     function delegatedAssets() external view override returns (uint256) {
-        return balanceOfyvsteCRVinWant();
+        return vault.strategies(address(this)).totalDebt;
+    }
+
+    function ethToWant(uint256 _amount) public view override returns (uint256) {
+        return _amount;
     }
 
     function prepareReturn(uint256 _debtOutstanding)
@@ -217,6 +221,10 @@ contract Strategy is BaseStrategy {
             if (tank >= _amountNeeded) tank = tank.sub(_amountNeeded);
             else tank = 0;
         }
+    }
+
+    function liquidateAllPositions() internal override returns (uint256 _amountFreed) {
+        (_amountFreed,) = liquidatePosition(vault.strategies(address(this)).totalDebt);
     }
 
     function _withdrawSome(uint _amount) internal returns (uint) {
