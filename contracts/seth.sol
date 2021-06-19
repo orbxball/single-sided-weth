@@ -72,19 +72,19 @@ contract Strategy is BaseStrategy {
         eCRV.approve(address(yveCRV), uint(-1));
     }
 
-    function setThreshold(uint _threshold) external onlyAuthorized {
+    function setThreshold(uint _threshold) external onlyEmergencyAuthorized {
         threshold = _threshold;
     }
 
-    function setSlip(uint _slip) external onlyAuthorized {
+    function setSlip(uint _slip) external onlyEmergencyAuthorized {
         slip = _slip;
     }
 
-    function setMaxAmount(uint _maxAmount) external onlyAuthorized {
+    function setMaxAmount(uint _maxAmount) external onlyEmergencyAuthorized {
         maxAmount = _maxAmount;
     }
 
-    function setInterval(uint _interval) external onlyAuthorized {
+    function setInterval(uint _interval) external onlyEmergencyAuthorized {
         interval = _interval;
     }
 
