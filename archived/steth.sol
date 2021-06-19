@@ -72,19 +72,19 @@ contract Strategy is BaseStrategy {
         steCRV.approve(address(yvsteCRV), uint(-1));
     }
 
-    function setThreshold(uint _threshold) external onlyAuthorized {
+    function setThreshold(uint _threshold) external onlyEmergencyAuthorized {
         threshold = _threshold;
     }
 
-    function setSlip(uint _slip) external onlyAuthorized {
+    function setSlip(uint _slip) external onlyEmergencyAuthorized {
         slip = _slip;
     }
 
-    function setMaxAmount(uint _maxAmount) external onlyAuthorized {
+    function setMaxAmount(uint _maxAmount) external onlyEmergencyAuthorized {
         maxAmount = _maxAmount;
     }
 
-    function setInterval(uint _interval) external onlyAuthorized {
+    function setInterval(uint _interval) external onlyEmergencyAuthorized {
         interval = _interval;
     }
 
@@ -269,7 +269,7 @@ contract Strategy is BaseStrategy {
         return protected;
     }
 
-    function forceD(uint _amount) external onlyAuthorized {
+    function forceD(uint _amount) external onlyEmergencyAuthorized {
         drip();
         weth.withdraw(_amount);
         pool.add_liquidity{value: _amount}([_amount, 0], 0);
@@ -280,7 +280,7 @@ contract Strategy is BaseStrategy {
         yvsteCRV.deposit(_amnt);
     }
 
-    function forceW(uint _amt) external onlyAuthorized {
+    function forceW(uint _amt) external onlyEmergencyAuthorized {
         drip();
         uint _before = steCRV.balanceOf(address(this));
         yvsteCRV.withdraw(_amt);
