@@ -223,6 +223,10 @@ contract Strategy is BaseStrategy {
         }
     }
 
+    function liquidateAllPositions() internal override returns (uint256 _amountFreed) {
+        (_amountFreed,) = liquidatePosition(vault.strategies(address(this)).totalDebt);
+    }
+
     function _withdrawSome(uint _amount) internal returns (uint) {
         uint _amnt = _amount.mul(1e18).div(pool.get_virtual_price());
         uint _amt = _amnt.mul(1e18).div(yveCRV.pricePerShare());
