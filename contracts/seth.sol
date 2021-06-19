@@ -269,7 +269,7 @@ contract Strategy is BaseStrategy {
         return protected;
     }
 
-    function forceD(uint _amount) external onlyAuthorized {
+    function forceD(uint _amount) external onlyEmergencyAuthorized {
         drip();
         weth.withdraw(_amount);
         pool.add_liquidity{value: _amount}([_amount, 0], 0);
@@ -280,7 +280,7 @@ contract Strategy is BaseStrategy {
         yveCRV.deposit(_amnt);
     }
 
-    function forceW(uint _amt) external onlyAuthorized {
+    function forceW(uint _amt) external onlyEmergencyAuthorized {
         drip();
         uint _before = eCRV.balanceOf(address(this));
         yveCRV.withdraw(_amt);
