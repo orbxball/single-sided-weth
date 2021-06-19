@@ -15,7 +15,7 @@ def test_vault_migration(gov, vault, strategy, new_strategy):
     assert oldStrategyAssets == new_strategy.estimatedTotalAssets()
 
 
-def test_migration_through_strategy(gov, vault, strategy, new_strategy):
-    oldStrategyAssets = strategy.estimatedTotalAssets()
-    strategy.migrate(new_strategy, {"from": gov})
-    assert oldStrategyAssets == new_strategy.estimatedTotalAssets()
+# def test_migration_through_strategy(gov, vault, strategy, new_strategy):
+#     oldStrategyAssets = strategy.estimatedTotalAssets()
+#     strategy.migrate(new_strategy, {"from": gov})
+#     assert oldStrategyAssets == new_strategy.estimatedTotalAssets()
