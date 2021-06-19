@@ -124,6 +124,10 @@ contract Strategy is BaseStrategy {
         return vault.strategies(address(this)).totalDebt;
     }
 
+    function ethToWant(uint256 _amount) public view override returns (uint256) {
+        return _amount;
+    }
+
     function prepareReturn(uint256 _debtOutstanding)
         internal
         override
