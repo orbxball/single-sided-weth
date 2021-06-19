@@ -53,7 +53,7 @@ contract Strategy is BaseStrategy {
     uint constant public DENOMINATOR = 10000;
     uint public threshold = 6000;
     uint public slip = 50;
-    uint public maxAmount = 1e20;
+    uint public maxAmount = 5e20;
     uint public interval = 6 hours;
     uint public tank;
     uint public p;
