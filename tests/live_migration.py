@@ -5,8 +5,8 @@ import brownie
 
 def test_live_migration(web3, chain, vault, strategy, token, whale, gov, strategist, rewards, amount):
 
-    live_strat = Contract("0xC5e385f7Dad49F230AbD53e21b06aA0fE8dA782D", owner=gov)
-    new_strat = Contract("0x8c44Cc5c0f5CD2f7f17B9Aca85d456df25a61Ae8", owner=gov)
+    live_strat = Contract("0x37770F958447fFa1571fc9624BFB3d673161f37F", owner=gov)
+    new_strat = Contract("0xCdC3d3A18c9d83Ee6E10E91B48b1fcb5268C97B5", owner=gov)
     vault = Contract(new_strat.vault(), owner=gov)
 
     print(f"\n >>> before migration")
