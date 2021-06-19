@@ -121,7 +121,7 @@ contract Strategy is BaseStrategy {
     }
 
     function delegatedAssets() external view override returns (uint256) {
-        return balanceOfyveCRVinWant();
+        return vault.strategies(address(this)).totalDebt;
     }
 
     function prepareReturn(uint256 _debtOutstanding)
